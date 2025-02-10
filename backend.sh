@@ -6,7 +6,7 @@ dnf install nodejs -y &>>/tmp/exp.log
  cp backend.service /etc/systemd/system/backend.service &>>/tmp/exp.log
 useradd expense
 
-mkdir /app
+mkdir /app &>>/tmp/exp.log
 
 curl -o /tmp/backend.zip https://expense-artifacts.s3.amazonaws.com/expense-backend-v2.zip &>>/tmp/exp.log
 cd /app &>>/tmp/exp.log
