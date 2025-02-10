@@ -1,6 +1,6 @@
-dnf install mysql-server -y
+dnf install mysql-server -y &>>/tmp/exp.log
 
-systemctl enable mysqld
-systemctl start mysqld
+systemctl enable mysqld &>>/tmp/exp.log
+systemctl start mysqld &>>/tmp/exp.log
 
-sudo mysql_secure_installation --set-root-pass ExpenseApp@1
+sudo mysql_secure_installation --set-root-pass ExpenseApp@1 &>>/tmp/exp.log
