@@ -1,12 +1,26 @@
 source common.sh
 
-print "install sql"
-systemctl enable mysqld &>>/tmp/exp.log
- echo $?
+mysql_root_password=$1
 
-print "start MySQl"
-systemctl start mysqld &>>/tmp/exp.log
- echo $?
+if [ -z "${mysql_root_passowrd}" ]; then
 
-sudo mysql_secure_installation --set-root-pass ExpenseApp@1 &>>/tmp/exp.log
- echo $?
+echo "input password is missing"
+  exit 1
+  fi
+
+print "install Mysql server"
+dnf install mysql-server -y
+check_status $?
+
+print "start sql service"
+systemctl enable mysqld &>>$LOG
+systemctl start mysqld &>>$LOG
+check_status $?
+
+print "Setup MySQL Password"
+echo 'show databases' |mysql -h mysql-dev.awsdevops.sbs -uroot -p${mysql_root_password} &>>$LOG
+if [ $? -ne 0 ]; then
+  mysql_secure_installation --set-root-pass ${mysql_root_password} &>>$LOG
+fi
+Check_Status $?
+

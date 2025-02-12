@@ -1,47 +1,53 @@
 source common.sh
+component=backend
+App_dir=/app
+mysql_root_password=$1
 
-print "disable nodejs"
-dnf module disable nodejs -y &>>/tmp/exp.log
- echo $?
+if [ -z "${mysql_root_passowrd}"  ]; then
 
- print "enabling nodejs version 20"
-dnf module enable nodejs:20 -y &>>/tmp/exp.log
- echo $?
+echo "input password is missing"
+exit 1
+  fi
 
- print "install nodejs"
-dnf install nodejs -y &>>/tmp/exp.log
- echo $?
 
- print "copying backend service"
- cp backend.service /etc/systemd/system/backend.service &>>/tmp/exp.log
-  echo $?
-useradd expense
+print "Disable default NodeJS Version Module"
+dnf module disable nodejs -y &>>$LOG
+check_status $?
 
-mkdir /app &>>/tmp/exp.log
- echo $?
+print "Enable NodeJS module for V20"
+dnf module enable nodejs:20 -y &>>$LOG
+check_status $?
 
- print "downloading backend components"
-curl -o /tmp/backend.zip https://expense-artifacts.s3.amazonaws.com/expense-backend-v2.zip &>>/tmp/exp.log
- echo $?
-cd /app &>>/tmp/exp.log
+print "install nodejs"
+dnf install nodejs -y &>>$LOG
+check_status $?
 
-print "extracting backend components"
-unzip /tmp/backend.zip
- echo $?
-cd /app &>>/tmp/exp.log
- echo $?
- print "installing nodejs"
+print "Adding application user"
+id expense &>>$LOG
+if [ $? -ne 0 ]; then
+useradd expense &>>$LOG
+fi
+
+ print "Copy Backend Service file"
+ cp backend.service /etc/systemd/system/backend.service &>>$LOG
+ check_status $?
+
+app_req
+
+print "Download NodeJS Dependencies"
+cd /app &>>$LOG
 npm install
- echo $?
- print "reloading DB"
-systemctl daemon-reload &>>/tmp/exp.log
- echo $?
- print "enable backend service"
-systemctl enable backend &>>/tmp/exp.log
- echo $?
+check_status $?
 
- print "start backend service"
-systemctl start backend &>>/tmp/exp.log
- echo $?
-mysql -h 172.31.32.100  -uroot -pExpenseApp@1 < /app/schema/backend.sql &>>/tmp/exp.log
- echo $?
+print "Start backend service"
+systemctl daemon-reload &>>$LOG
+systemctl enable backend &>>$LOG
+systemctl start backend &>>$LOG
+check_status $?
+
+print "Install MySQL Client"
+dnf install mysql -y &>>$LOG
+Check_Status $?
+
+mysql -h mysql-dev.awsdevops.sbs  -uroot -p${mysql_root_password} < /app/schema/backend.sql &>>$LOG
+check_status $?
