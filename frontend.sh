@@ -1,7 +1,7 @@
 
 source common.sh
 
-print "Install nginx"
+print "Install nginx "
 dnf install nginx -y &>>/tmp/exp.log
  echo $?
 print "Enable nginx"
