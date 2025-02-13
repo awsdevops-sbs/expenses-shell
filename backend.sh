@@ -32,7 +32,7 @@ print "Copy Backend Service file"
 cp backend.service /etc/systemd/system/backend.service &>>$LOG
 check_status $?
 
-App_PreReq
+app_req
 
 print "Download NodeJS Dependencies"
 cd /app &>>$LOG
