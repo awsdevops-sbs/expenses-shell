@@ -31,7 +31,7 @@ print(){
 
    check_status $?
 
-  print "extract app components"
+  print "extract app components "
   cd ${app_dir} &>>$LOG
   unzip /tmp/${component}.zip &>>$LOG
    check_status $?
