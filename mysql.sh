@@ -22,5 +22,5 @@ echo 'show databases' |mysql -h mysql-dev.awsdevops.sbs -uroot -p${mysql_root_pa
 if [ $? -ne 0 ]; then
   mysql_secure_installation --set-root-pass ${mysql_root_password} &>>$LOG
 fi
-Check_Status $?
+check_status $?
 
