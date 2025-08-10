@@ -9,7 +9,7 @@ echo "input password is missing"
   fi
 
 print "install Mysql server"
-dnf install mysql-server -y
+dnf install mysql.yml-server -y
 check_status $?
 
 print "start sql service"
@@ -18,7 +18,7 @@ systemctl start mysqld &>>$LOG
 check_status $?
 
 print "Setup MySQL Password"
-echo 'show databases' |mysql -h mysql-dev.awsdevops.sbs -uroot -p${mysql_root_password} &>>$LOG
+echo 'show databases' |mysql.yml -h mysql.yml-dev.awsdevops.sbs -uroot -p${mysql_root_password} &>>$LOG
 if [ $? -ne 0 ]; then
   mysql_secure_installation --set-root-pass ${mysql_root_password} &>>$LOG
 fi
